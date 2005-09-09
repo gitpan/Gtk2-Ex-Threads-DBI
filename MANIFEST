@@ -6,3 +6,4 @@ README
 lib/Gtk2/Ex/Threads/DBI.pm
 lib/Gtk2/Ex/Threads/DBI/Query.pm
 examples/thread-dbi-usage.pl
+t/1.t

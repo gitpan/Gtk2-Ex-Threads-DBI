@@ -3,3 +3,8 @@ Revision history for Gtk2-Ex-Threads-DBI
 0.01    Date/time
         First version, released on an unsuspecting world.
 
+0.02
+	Fixed Makefile.PL to use / in path names (unix style)
+	Fixed the constructor to accept $attr for connection
+	Added a nominal test
+

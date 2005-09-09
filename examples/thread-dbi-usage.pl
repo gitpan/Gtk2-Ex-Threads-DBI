@@ -12,9 +12,10 @@ use Gtk2::Ex::Threads::DBI;
 use Storable qw(freeze thaw);
 
 my $mythread = Gtk2::Ex::Threads::DBI->new( {
-	dsn		=> 'DBI:mysql:test:localhost',
-	user	=> 'root',
-	passwd	=> 'test',
+	dsn		=> 'DBI:mysql:threadtest:localhost',
+	user	=> 'threaduser',
+	passwd	=> 'parrot',
+	attr	=> { RaiseError => 1, AutoCommit => 0 }
 });
 
 my $query_1 = $mythread->register_query(undef, \&call_sql_1, \&call_back_1);
@@ -76,9 +77,8 @@ sub call_sql_1 {
 	my ($dbh, $sqlparams) = @_;
 	my $params = thaw $sqlparams;
 	my $sth = $dbh->prepare(qq{
-		# my complicated long query that takes a long time to complete
-		select * from xxx
-		where yyy like ?
+		select * from table1 
+		where description like ?
 		limit 1000
 	});
 	$sth->execute('%'.$params->[0].'%');
@@ -100,8 +100,7 @@ sub call_back_1 {
 sub call_sql_2 {
 	my ($dbh) = @_;
 	my $sth = $dbh->prepare(qq{
-		# my complicated long query that takes a long time to complete
-		select * from xxx
+		select * from table1
 		limit 1000
 	});
 	$sth->execute();

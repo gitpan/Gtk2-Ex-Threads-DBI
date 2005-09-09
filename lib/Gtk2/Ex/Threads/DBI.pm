@@ -1,6 +1,6 @@
 package Gtk2::Ex::Threads::DBI;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use strict;
 use warnings;
@@ -55,6 +55,7 @@ sub start {
 	my $dsn  = $self->{connectionparams}->{dsn};
 	my $user = $self->{connectionparams}->{user};
 	my $pwd  = $self->{connectionparams}->{passwd};
+	my $attr = $self->{connectionparams}->{attr};
 	$self->{sharedhash}->{deathflag} = 0;
 	my %sharedhash : shared;
 	foreach my $key (keys %{$self->{sharedhash}}) {
@@ -64,7 +65,7 @@ sub start {
 	
 	my $thread = threads->create (
 		sub {
-			my $dbh = DBI->connect($dsn, $user, $pwd) or warn "Connection failed !";
+			my $dbh = DBI->connect($dsn, $user, $pwd, $attr) or warn "Connection failed !";
 			while (! $self->{sharedhash}->{deathflag}) {
 				foreach my $key (keys %{$self->{sharedhash}}) {
 					if ($key =~ /executesql$/ and $self->{sharedhash}->{$key}) {
@@ -80,6 +81,7 @@ sub start {
 					}
 				}
 			}
+			$dbh->disconnect if $self->{sharedhash}->{deathflag};
 		}
 	);
 	Glib::Timeout->add ($self->{pollinginterval}, sub {
@@ -141,6 +143,7 @@ using callbacks from a separate thread.
 		dsn		=> 'DBI:mysql:test:localhost',
 		user	=> 'root',
 		passwd	=> 'test',
+		attr	=> { RaiseError => 1, AutoCommit => 0 }
 	});
 
 	my $query = $mythread->register_query(undef, \&call_sql, \&call_back);
@@ -192,6 +195,7 @@ Accepts a hash containing the DBI connection params.
 		dsn		=> 'DBI:mysql:test:localhost',
 		user	=> 'root',
 		passwd	=> 'test',
+		attr	=> { RaiseError => 1, AutoCommit => 0 }
 	});
 
 =head2 register_query($caller_ref, $call_sql, $call_back);
