@@ -1,3 +1,7 @@
+# ------------------------------------------- #
+# This example requires a mysql database up and running
+# Try thread-dbi-csv.pl if you don't want to set up your own mysql database
+# ------------------------------------------- #
 use strict;
 use warnings;
 use Gtk2::Ex::Simple::List;

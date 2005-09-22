@@ -1,6 +1,6 @@
 package Gtk2::Ex::Threads::DBI;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use strict;
 use warnings;

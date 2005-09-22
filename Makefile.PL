@@ -15,6 +15,7 @@ WriteMakefile(
         'Gtk2' => 0,
         'Glib' => 0,
         'DBD::CSV' => 0,
+        'Carp' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Gtk2-Ex-Threads-DBI-*' },

@@ -8,5 +8,9 @@ Revision history for Gtk2-Ex-Threads-DBI
 	Fixed the constructor to accept $attr for connection
 	Added a nominal test
 
-0.0	Sep 21, 2005
+0.03	Sep 21, 2005
 	Added real tests
+	
+0.04	Sep 21, 2005
+	Added DBD::CSV based example
+	
