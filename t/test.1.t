@@ -4,7 +4,6 @@ use Glib qw(TRUE FALSE);
 use Gtk2 qw/-init/;
 use Data::Dumper;
 use Gtk2::Ex::Threads::DBI;
-use Storable qw(freeze thaw);
 use Gtk2 qw/-init -threads-init/;
 # This line is required on win32. I dont know why
 Gtk2::Gdk::Threads->enter if $^O =~ /Win32/;
@@ -40,8 +39,7 @@ $query2->execute(['rat']);
 Gtk2->main;
 
 sub call_sql_1 {
-	my ($dbh, $sqlparams) = @_;
-	my $params = thaw $sqlparams;
+	my ($dbh, $params) = @_;
 	my $sth = $dbh->prepare(qq{
 		select * from table1
 	});
@@ -55,19 +53,17 @@ sub call_sql_1 {
 
 sub call_back_1 {
 	my ($self, $result_array) = @_;
-	my $result = thaw $result_array;
-	is($#{@$result}, 362);
+	is($#{@$result_array}, 362);
 	my $x = [
           'name0',
           'desc0',
           'cat'
         ];
-	is(Dumper($result->[0]), Dumper($x));
+	is(Dumper($result_array->[0]), Dumper($x));
 }
 
 sub call_sql_2 {
-	my ($dbh, $sqlparams) = @_;
-	my $params = thaw $sqlparams;
+	my ($dbh, $params) = @_;
 	my $x = ['rat'];
 	is(Dumper($params), Dumper($x));
 	my $sth = $dbh->prepare(qq{
@@ -85,14 +81,13 @@ sub call_sql_2 {
 
 sub call_back_2 {
 	my ($self, $result_array) = @_;
-	my $result = thaw $result_array;
-	is($#{@$result}, 120);
+	is($#{@$result_array}, 120);
 	my $x = [
           'name9',
           'desc9',
           'rat'
         ];
-	is(Dumper($result->[0]), Dumper($x));
+	is(Dumper($result_array->[0]), Dumper($x));
 	terminate();
 }
 

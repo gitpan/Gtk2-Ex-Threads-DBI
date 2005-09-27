@@ -1,6 +1,6 @@
 package Gtk2::Ex::Threads::DBI;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use strict;
 use warnings;
@@ -71,8 +71,12 @@ sub start {
 					if ($key =~ /executesql$/ and $self->{sharedhash}->{$key}) {
 						my $queryid = $key;
 						$queryid =~ s/_executesql$//;
-						my $result = &{$self->{$queryid}->{runsql}}
-							($dbh, $self->{sharedhash}->{$queryid.'_sqlparams'});
+						my $getresults = sub {
+							my $sqlparams = $self->{sharedhash}->{$queryid.'_sqlparams'};
+							my $thawed_params = thaw $sqlparams;
+							return &{ $self->{$queryid}->{runsql} }($dbh, $thawed_params);
+						};
+						my $result = &$getresults;
 						$self->{sharedhash}->{$queryid.'_sqlreturn'} 
 							= freeze $result if $result;
 						$self->{sharedhash}->{$queryid.'_executesql'} = 0;
@@ -90,11 +94,14 @@ sub start {
 		}
 		foreach my $queryid (keys %$self) {
 			if ($self->{sharedhash}->{$queryid.'_sqlreturn'}) {
-				&{$self->{$queryid}->{callback}}
-					(
-					 $self->{$queryid}->{object}, 
-					 $self->{sharedhash}->{$queryid.'_sqlreturn'}
+				my $do_callback = sub {
+					my $sqlreturn = $self->{sharedhash}->{$queryid.'_sqlreturn'};
+					my $thawed_sqlreturn = thaw $sqlreturn;
+					&{ $self->{$queryid}->{callback} }(
+						$self->{$queryid}->{object}, $thawed_sqlreturn
 					);
+				};
+				&$do_callback;
 				$self->{sharedhash}->{$queryid.'_sqlreturn'} = undef;
 			}
 		}

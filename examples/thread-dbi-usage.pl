@@ -78,8 +78,7 @@ Gtk2->main;
 # ------------------------------------------- #
 
 sub call_sql_1 {
-	my ($dbh, $sqlparams) = @_;
-	my $params = thaw $sqlparams;
+	my ($dbh, $params) = @_;
 	my $sth = $dbh->prepare(qq{
 		select * from table1 
 		where description like ?
@@ -96,8 +95,8 @@ sub call_sql_1 {
 sub call_back_1 {
 	my ($self, $result_array) = @_;
 	@{$slist->{data}} = ();
-	foreach my $x (thaw $result_array) {
-		push @{$slist->{data}}, @$x;
+	foreach my $x (@$result_array) {
+		push @{$slist->{data}}, $x;
 	}
 }
 
@@ -118,7 +117,7 @@ sub call_sql_2 {
 sub call_back_2 {
 	my ($self, $result_array) = @_;
 	@{$slist->{data}} = ();
-	foreach my $x (thaw $result_array) {
-		push @{$slist->{data}}, @$x;
+	foreach my $x (@$result_array) {
+		push @{$slist->{data}}, $x;
 	}
 }

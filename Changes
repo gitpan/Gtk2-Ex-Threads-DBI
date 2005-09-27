@@ -14,3 +14,6 @@ Revision history for Gtk2-Ex-Threads-DBI
 0.04	Sep 21, 2005
 	Added DBD::CSV based example
 	
+0.05	Sep 27, 2005
+	Handle freezing and thawing internally using references.
+	Users don't have to deal with Storable explicitly.
