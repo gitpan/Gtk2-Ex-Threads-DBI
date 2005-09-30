@@ -1,6 +1,6 @@
 package Gtk2::Ex::Threads::DBI;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use strict;
 use warnings;
@@ -84,6 +84,7 @@ sub start {
 						threads->yield;
 					}
 				}
+				select(undef, undef, undef, $self->{pollinginterval}/1000);
 			}
 			$dbh->disconnect if $self->{sharedhash}->{deathflag};
 		}
@@ -91,6 +92,7 @@ sub start {
 	Glib::Timeout->add ($self->{pollinginterval}, sub {
 		if ($self->{sharedhash}->{deathflag}) {
 			$thread->join;
+			return 0;
 		}
 		foreach my $queryid (keys %$self) {
 			if ($self->{sharedhash}->{$queryid.'_sqlreturn'}) {

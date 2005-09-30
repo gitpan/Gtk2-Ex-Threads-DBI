@@ -17,3 +17,7 @@ Revision history for Gtk2-Ex-Threads-DBI
 0.05	Sep 27, 2005
 	Handle freezing and thawing internally using references.
 	Users don't have to deal with Storable explicitly.
+
+0.06	Sep 30, 2005
+	The internal while loop now does a sleep for $pollinginterval
+	That should keep you CPU from burning out
